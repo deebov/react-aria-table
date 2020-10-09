@@ -1,0 +1,334 @@
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
+/* @import '../commons/index.css'; */
+
+:root {
+  --spectrum-font-fallbacks-sans: -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, sans-serif;
+
+  --spectrum-font-family-base: "adobe-clean-ux", "adobe-clean",
+    "Source Sans Pro", var(--spectrum-font-fallbacks-sans);
+  --spectrum-font-family-han: "adobe-clean-han-japanese",
+    var(--spectrum-font-fallbacks-sans);
+  --spectrum-font-family-ar: "adobe-arabic", "myriad-arabic",
+    var(--spectrum-font-fallbacks-sans);
+  --spectrum-font-family-he: "adobe-hebrew", var(--spectrum-font-fallbacks-sans);
+  --spectrum-font-family-zhhans: "adobe-clean-han-simplified-c", "SimSun",
+    "Heiti SC Light", var(--spectrum-font-fallbacks-sans);
+  --spectrum-font-family-zh: var(--spectrum-font-family-zhhans);
+  --spectrum-font-family-zhhant: "adobe-clean-han-traditional",
+    "Microsoft JhengHei UI", "Microsoft JhengHei", "Heiti TC Light",
+    var(--spectrum-font-fallbacks-sans);
+  --spectrum-font-family-ko: "adobe-clean-han-korean", "Malgun Gothic",
+    "Apple Gothic", var(--spectrum-font-fallbacks-sans);
+  --spectrum-font-family-ja: "adobe-clean-han-japanese", "Yu Gothic",
+    "\30E1 \30A4 \30EA \30AA", "\30D2 \30E9 \30AE \30CE \89D2 \30B4  Pro W3",
+    "Hiragino Kaku Gothic Pro W3", "Osaka",
+    "\FF2D \FF33 \FF30 \30B4 \30B7 \30C3 \30AF", "MS PGothic",
+    var(--spectrum-font-fallbacks-sans);
+  --spectrum-text-size: var(--spectrum-alias-font-size-default);
+  --spectrum-text-body-line-height: var(--spectrum-alias-line-height-medium);
+  --spectrum-text-size-text-label: var(--spectrum-label-text-size);
+  --spectrum-line-height-text-label: var(--spectrum-label-text-line-height);
+}
+
+:root {
+  --spectrum-padding: var(--spectrum-global-dimension-size-150);
+  --spectrum-margin: var(--spectrum-padding);
+  --spectrum-border-radius: var(--spectrum-global-dimension-size-50);
+
+  --spectrum-component-single-line-height: var(
+    --spectrum-alias-single-line-height
+  );
+  --spectrum-component-single-line-width: var(
+    --spectrum-alias-single-line-width
+  );
+}
+
+:root {
+  --spectrum-table-cell-compact-padding-y: var(
+    --spectrum-global-dimension-size-75
+  );
+  --spectrum-table-cell-regular-padding-y: var(
+    --spectrum-global-dimension-size-125
+  );
+  --spectrum-table-cell-spacious-padding-y: var(
+    --spectrum-global-dimension-size-175
+  );
+}
+
+.spectrum-Table {
+  border-collapse: separate;
+  border-spacing: 0;
+  outline: none;
+  isolation: isolate;
+}
+
+.spectrum-Table-sortedIcon {
+  display: none;
+  margin-inline-start: var(--spectrum-table-header-sort-icon-gap);
+
+  vertical-align: middle;
+
+  transition: transform var(--spectrum-global-animation-duration-100)
+    ease-in-out;
+}
+
+.spectrum-Table-headCell {
+  box-sizing: border-box;
+  font-size: var(--spectrum-table-header-text-size);
+  font-weight: var(--spectrum-table-header-text-font-weight);
+  line-height: var(--spectrum-table-header-text-line-height);
+  min-height: var(--spectrum-table-header-min-height);
+  letter-spacing: var(--spectrum-table-header-text-letter-spacing);
+  text-transform: uppercase;
+  padding: var(--spectrum-table-header-padding-y)
+    var(--spectrum-table-header-padding-x);
+  transition: color var(--spectrum-global-animation-duration-100) ease-in-out;
+  cursor: default;
+  outline: 0;
+  border-radius: var(--spectrum-table-header-border-radius);
+
+  &.is-sortable {
+    cursor: default;
+  }
+
+  &.is-sorted-asc,
+  &.is-sorted-desc {
+    .spectrum-Table-sortedIcon {
+      display: inline-block;
+      /* offset icon because it's not properly aligned */
+      margin-top: calc(var(--spectrum-global-dimension-size-25) * -1);
+    }
+  }
+
+  &.is-sorted-asc {
+    .spectrum-Table-sortedIcon {
+      transform: rotateZ(180deg);
+    }
+  }
+}
+
+.spectrum-Table-cell--alignCenter {
+  text-align: center;
+}
+
+.spectrum-Table-cell--alignEnd {
+  text-align: end;
+}
+
+/* Helper for shared drop target overlay */
+%drop-target {
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 1;
+  }
+}
+
+.spectrum-Table-body {
+  position: relative;
+
+  border-width: var(--spectrum-table-border-size);
+  border-radius: var(--spectrum-table-border-radius);
+  overflow: auto;
+  vertical-align: var(--spectrum-table-cell-vertical-alignment);
+
+  /* Fix scrollbars on iOS with sticky row headers */
+  transform: translate3d(0, 0, 0);
+
+  &.is-drop-target {
+    @inherit: %drop-target;
+  }
+}
+
+/* The tbody tag doesn't allow setting a border-radius, so these hacks are to make that work
+   by putting it on the individual cells instead. */
+.spectrum-Table:not(.spectrum-Table--quiet) {
+  tbody.spectrum-Table-body {
+    border-width: var(--spectrum-table-border-size);
+    border-radius: var(--spectrum-table-border-radius);
+
+    .spectrum-Table-row:first-child .spectrum-Table-cell:first-child {
+      border-top-left-radius: var(--spectrum-table-border-radius);
+    }
+
+    .spectrum-Table-row:first-child .spectrum-Table-cell:last-child {
+      border-top-right-radius: var(--spectrum-table-border-radius);
+    }
+
+    .spectrum-Table-row:last-child .spectrum-Table-cell:first-child {
+      border-bottom-left-radius: var(--spectrum-table-border-radius);
+    }
+
+    .spectrum-Table-row:last-child .spectrum-Table-cell:last-child {
+      border-bottom-right-radius: var(--spectrum-table-border-radius);
+    }
+  }
+}
+
+.spectrum-Table-cell {
+  box-sizing: border-box;
+  font-size: var(--spectrum-table-cell-text-size);
+  font-weight: var(--spectrum-table-cell-text-font-weight);
+  /* need to subtract 1px here because 14px * 1.5 + 14px + 14px = 49px, and we want 48px */
+  line-height: calc(
+    calc(
+        var(--spectrum-table-cell-text-size) *
+          var(--spectrum-table-cell-text-line-height)
+      ) - 1px
+  );
+  padding: var(--spectrum-table-cell-regular-padding-y)
+    var(--spectrum-table-cell-padding-x);
+}
+
+.spectrum-Table--compact .spectrum-Table-cell {
+  padding-top: var(--spectrum-table-cell-compact-padding-y);
+  padding-bottom: var(--spectrum-table-cell-compact-padding-y);
+}
+
+.spectrum-Table--spacious .spectrum-Table-cell {
+  padding-top: var(--spectrum-table-cell-spacious-padding-y);
+  padding-bottom: var(--spectrum-table-cell-spacious-padding-y);
+}
+
+.spectrum-Table-cellContents {
+  /* truncate text with ellipsis */
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+
+  /* allow focus ring of child to extend outside the bounds */
+  padding: 0 4px;
+  margin: 0 -4px;
+}
+
+.spectrum-Table--wrap .spectrum-Table-cellContents {
+  white-space: normal;
+}
+
+.spectrum-Table-cell,
+.spectrum-Table-headCell {
+  position: relative;
+
+  &:focus {
+    outline: none;
+  }
+
+  &:focus-ring,
+  &.is-focused {
+    outline: none;
+
+    &::before {
+      content: "";
+
+      /* Float above border */
+      z-index: 1;
+      position: absolute;
+
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+
+      border-radius: calc(
+        var(--spectrum-table-cell-border-radius-key-focus) - 1px
+      );
+    }
+  }
+}
+
+.spectrum-Table-headCell {
+  &:focus-ring,
+  &.is-focused {
+    &::before {
+      top: var(--spectrum-table-border-size);
+      right: var(--spectrum-table-border-size);
+      bottom: var(--spectrum-table-border-size);
+      left: var(--spectrum-table-border-size);
+    }
+  }
+}
+
+.spectrum-Table-cell--divider {
+  border-inline-end-width: var(--spectrum-table-divider-border-size);
+}
+
+.spectrum-Table-row {
+  position: relative;
+  cursor: default;
+  transition: background-color var(--spectrum-global-animation-duration-100)
+    ease-in-out;
+
+  &:focus {
+    outline: 0;
+  }
+
+  /* The focus ring must be on top of the first cell, so needs to be absolutely positioned. */
+  &:focus-ring {
+    &:before {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      width: var(--spectrum-selectlist-border-size-key-focus);
+      z-index: 3;
+    }
+  }
+
+  &.is-drop-target {
+    @inherit: %drop-target;
+  }
+}
+
+/* the CSS logical properties postcss plugin doesn't seem to work with :focus-ring. */
+[dir="rtl"] .spectrum-Table-row:focus-ring:before {
+  right: 0;
+}
+
+.spectrum-Table > .spectrum-Table-body > .spectrum-Table-row:last-of-type {
+  border-bottom-style: none;
+}
+
+.spectrum-Table--quiet {
+  .spectrum-Table-body {
+    border-radius: var(--spectrum-table-quiet-border-radius);
+  }
+
+  .spectrum-Table-body,
+  .spectrum-Table-row {
+    &.is-drop-target {
+      &::before {
+        border-radius: var(--spectrum-border-radius);
+      }
+    }
+  }
+}
+
+.spectrum-Table-headCell.spectrum-Table-checkboxCell,
+.spectrum-Table-cell.spectrum-Table-checkboxCell {
+  padding-inline-end: var(--spectrum-table-cell-checkbox-padding-right);
+  /* have to eliminate vertical padding to allow proper vertical alignment */
+  padding-top: 0px;
+  padding-bottom: 0px;
+  vertical-align: var(--spectrum-table-cell-checkbox-vertical-alignment);
+}
+
+.spectrum-Table-checkbox {
+  vertical-align: super;
+}
